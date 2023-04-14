@@ -1,0 +1,85 @@
+plugins {
+    id 'org.flywaydb.flyway'
+    id 'nu.studer.jooq'
+    id 'com.avast.gradle.docker-compose'
+}
+
+configurations {
+    flywayMigration
+}
+
+dependencies {
+    flywayMigration 'org.testcontainers:postgresql'
+    flywayMigration 'org.postgresql:postgresql'
+    jooqGenerator 'org.postgresql:postgresql'
+    implementation 'org.postgresql:postgresql'
+    api 'org.jooq:jooq'
+    api 'org.jooq:jooq-meta'
+    api 'org.jooq:jooq-codegen'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+
+    implementation 'org.flywaydb:flyway-core'
+}
+
+/**
+ * Start a PostgreSQL Docker container from the docker-compose.yml.
+ */
+dockerCompose {
+    stopContainers = false
+}
+dockerCompose.isRequiredBy(flywayMigrate)
+
+/**
+ * Run the Flyway database migrations against the PostgreSQL we started with Docker.
+ */
+flyway {
+    configurations = ['flywayMigration']
+    url = 'jdbc:postgresql://localhost:5431/components'
+    user = 'components'
+    password = 'components'
+}
+
+jooq {
+    configurations {
+        main {
+            generationTool {
+                logging = org.jooq.meta.jaxb.Logging.WARN
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = flyway.url
+                    user = flyway.user
+                    password = flyway.password
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        inputSchema = 'public'
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        includes = ''
+                        excludes = ''
+                    }
+                    target {
+                        packageName = 'io.reflectoring.components.common.database'
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Generates JOOQ classes against the database created by Flyway.
+*/
+tasks.named('generateJooq').configure {
+    // ensure database schema has been prepared by Flyway before generating the jOOQ sources
+    dependsOn tasks.named('flywayMigrate')
+
+    // declare Flyway migration scripts as inputs on the jOOQ task
+    inputs.files(fileTree('src/main/resources/db/migration'))
+            .withPropertyName('migrations')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    // make jOOQ task participate in incremental builds and build caching
+    allInputsDeclared = true
+    outputs.cacheIf { true }
+}

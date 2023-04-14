@@ -1,0 +1,10 @@
+dependencies {
+	implementation project(':common:database')
+
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	implementation 'io.reflectoring:sqs-starter'
+	implementation 'com.amazonaws:aws-java-sdk-sqs'
+	testImplementation 'io.reflectoring:sqs-starter-test'
+
+}

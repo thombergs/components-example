@@ -1,0 +1,6 @@
+rootProject.name = 'components'
+
+include 'components:check-engine'
+include 'common:database'
+include 'common:testcontainers'
+include 'server'

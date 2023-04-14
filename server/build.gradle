@@ -1,0 +1,28 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'java'
+}
+
+dependencies {
+    // internal modules
+    implementation project(':components:check-engine')
+
+    // Spring Boot dependencies
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.session:spring-session-jdbc'
+
+    // reflections
+    testImplementation 'org.reflections:reflections'
+    testImplementation 'com.tngtech.archunit:archunit-junit5'
+
+    // Fix for M1 processor
+    implementation 'io.netty:netty-resolver-dns-native-macos'
+}
+
+bootRun {
+    jvmArgs = [
+            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005",
+            "-Dspring.profiles.active=local",
+    ]
+}

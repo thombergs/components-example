@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+
+  postgres:
+    container_name: "components-jooq"
+    image: postgres:15
+    command: [
+        "postgres",
+        "-c", "log_min_duration_statement=1000",
+        "-c", "log_statement=none",
+        "-c", "log_duration=off",
+    ]
+    volumes:
+      - components-jooq-data:/var/lib/postgresqljooq/data
+    ports:
+      - 5431:5432
+    environment:
+      - POSTGRES_USER=components
+      - POSTGRES_PASSWORD=components
+      - POSTGRES_DB=components
+    restart: always
+
+volumes:
+  components-jooq-data:
+    driver: local

@@ -1,0 +1,99 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+buildscript {
+	ext {
+		javaVersion = '17'
+		springBootVersion = '3.0.5'
+		kotlinVersion = '1.7.22'
+		awsJavaSdkVersion = '1.11.739'
+		testcontainersVersion = '1.16.2'
+	}
+	dependencies {
+		// opening all Kotlin classes by default so that Spring can do its proxy magic
+		classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}"
+	}
+}
+
+plugins {
+	// Defining the versions of Gradle plugins to use in the sub-projects.
+	// "apply false" means that the plugin is no applied by default and has to be activated
+	// in the subprojects specifically.
+	id 'org.springframework.boot' version "${springBootVersion}" apply false
+	id 'io.spring.dependency-management' version '1.1.0'
+	id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}"
+	id 'org.jetbrains.kotlin.plugin.spring' version "${kotlinVersion}"
+	id 'org.flywaydb.flyway' version '8.0.0-beta3' apply false
+	id 'nu.studer.jooq' version '8.1' apply false
+	id 'com.avast.gradle.docker-compose' version '0.14.9' apply false
+}
+
+group = 'io.reflectoring'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = "$javaVersion"
+
+repositories {
+	mavenCentral()
+}
+
+subprojects {
+
+	apply plugin: 'java'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'java-library'
+	apply plugin: 'org.jetbrains.kotlin.jvm'
+	apply plugin: 'org.jetbrains.kotlin.plugin.spring'
+
+	group = 'io.reflectoring'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = "${javaVersion}"
+	targetCompatibility = "${javaVersion}"
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+			mavenBom("com.amazonaws:aws-java-sdk-bom:${awsJavaSdkVersion}")
+			mavenBom("org.testcontainers:testcontainers-bom:${testcontainersVersion}")
+		}
+
+		dependencies {
+			// SQS
+			dependency 'io.reflectoring:sqs-starter:0.0.11'
+			dependency 'io.reflectoring:sqs-starter-test:0.0.11'
+
+			// jOOQ
+			dependency 'org.jooq:jooq:3.18.2'
+			dependency 'org.jooq:jooq-meta:3.18.2'
+			dependency 'org.jooq:jooq-codegen:3.18.2'
+
+			// testing
+			dependency 'org.reflections:reflections:0.9.10'
+			dependency 'org.mockito.kotlin:mockito-kotlin:4.0.0'
+			dependency 'com.tngtech.archunit:archunit-junit5:0.21.0'
+
+		}
+	}
+
+	// Standard dependencies for all modules
+	dependencies {
+
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation project(':common:testcontainers')
+		testImplementation 'org.mockito.kotlin:mockito-kotlin'
+	}
+
+	tasks.withType(KotlinCompile) {
+		kotlinOptions {
+			freeCompilerArgs = ['-Xjsr305=strict']
+			jvmTarget = '17'
+		}
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+}
