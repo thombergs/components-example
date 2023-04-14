@@ -1,4 +1,4 @@
-package io.reflectoring.components.checkengine.internal.sqs.internal
+package io.reflectoring.components.checkengine.internal.queue.internal
 
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.services.sqs.AmazonSQS

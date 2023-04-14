@@ -7,6 +7,10 @@ import java.util.UUID
  */
 data class CheckRequest(
     val checkKey: io.reflectoring.components.checkengine.api.CheckKey,
-    val siteId: UUID,
+
+    /**
+     * ID used to segregate checks per tenant.
+     */
+    val tenantId: UUID,
     val pageUrl: String
 )

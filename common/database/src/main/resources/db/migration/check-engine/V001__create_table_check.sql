@@ -1,7 +1,7 @@
 create table ce_check (
     id serial unique,
     key varchar(50) not null,
-    site_id varchar(36) not null,
+    tenant_id varchar(36) not null,
     page_url varchar(1000) not null,
     start_date timestamp not null,
     end_date timestamp,
@@ -19,7 +19,7 @@ create table ce_check_fix (
 );
 
 create index ce_check_index on ce_check (
-  site_id,
+  tenant_id,
   page_url,
   execution_status,
   end_date

@@ -25,14 +25,14 @@ class JooqCheckRepository(
         val checkRecord = jooq.insertInto(CE_CHECK)
             .columns(
                 CE_CHECK.KEY,
-                CE_CHECK.SITE_ID,
+                CE_CHECK.TENANT_ID,
                 CE_CHECK.PAGE_URL,
                 CE_CHECK.START_DATE,
                 CE_CHECK.EXECUTION_STATUS
             )
             .values(
                 checkRequest.checkKey.key,
-                checkRequest.siteId.toString(),
+                checkRequest.tenantId.toString(),
                 checkRequest.pageUrl,
                 LocalDateTime.now(),
                 io.reflectoring.components.checkengine.api.ExecutionStatus.IN_PROGRESS.name
@@ -82,7 +82,7 @@ class JooqCheckRepository(
         return io.reflectoring.components.checkengine.api.Check(
             CheckId(record.id.toLong()),
             io.reflectoring.components.checkengine.api.CheckKey(record.key),
-            UUID.fromString(record.siteId),
+            UUID.fromString(record.tenantId),
             record.pageUrl,
             record.startDate,
             record.endDate,
@@ -112,8 +112,8 @@ class JooqCheckRepository(
             ?.let { toDomainObject(it) }
     }
 
-    override fun getLatestChecksCountByStatus(siteId: UUID, status: io.reflectoring.components.checkengine.api.ResultStatus): Int {
-        val latestChecks = latestSuccessfulChecks(siteId).asTable("latestChecks")
+    override fun getLatestChecksCountByStatus(tenantId: UUID, status: io.reflectoring.components.checkengine.api.ResultStatus): Int {
+        val latestChecks = latestSuccessfulChecks(tenantId).asTable("latestChecks")
 
         return jooq.fetchCount(
             jooq.selectFrom(latestChecks)
@@ -124,26 +124,26 @@ class JooqCheckRepository(
     /**
      * Subquery that returns the most current check of each type for a given site.
      */
-    private fun latestSuccessfulChecks(siteId: UUID): Select<Record8<Int, String, String, String, LocalDateTime, LocalDateTime, String, String>> {
+    private fun latestSuccessfulChecks(tenantId: UUID): Select<Record8<Int, String, String, String, LocalDateTime, LocalDateTime, String, String>> {
         return jooq.select(
             CE_CHECK.ID,
             CE_CHECK.KEY,
-            CE_CHECK.SITE_ID,
+            CE_CHECK.TENANT_ID,
             CE_CHECK.PAGE_URL,
             CE_CHECK.START_DATE,
             CE_CHECK.END_DATE,
             CE_CHECK.EXECUTION_STATUS,
             CE_CHECK.RESULT_STATUS
         )
-            .distinctOn(CE_CHECK.SITE_ID, CE_CHECK.PAGE_URL, CE_CHECK.KEY)
+            .distinctOn(CE_CHECK.TENANT_ID, CE_CHECK.PAGE_URL, CE_CHECK.KEY)
             .from(CE_CHECK)
-            .where(CE_CHECK.SITE_ID.eq(siteId.toString()))
+            .where(CE_CHECK.TENANT_ID.eq(tenantId.toString()))
             .and(CE_CHECK.EXECUTION_STATUS.eq(io.reflectoring.components.checkengine.api.ExecutionStatus.SUCCESS.name))
-            .orderBy(CE_CHECK.SITE_ID, CE_CHECK.PAGE_URL, CE_CHECK.KEY, CE_CHECK.END_DATE.desc())
+            .orderBy(CE_CHECK.TENANT_ID, CE_CHECK.PAGE_URL, CE_CHECK.KEY, CE_CHECK.END_DATE.desc())
     }
 
-    override fun getLatestChecksSummaries(siteId: UUID): List<io.reflectoring.components.checkengine.api.ChecksSummary> {
-        val latestChecks = latestSuccessfulChecks(siteId).asTable("latestChecks")
+    override fun getLatestChecksSummaries(tenantId: UUID): List<io.reflectoring.components.checkengine.api.ChecksSummary> {
+        val latestChecks = latestSuccessfulChecks(tenantId).asTable("latestChecks")
 
         return jooq.select(
             field("page_url", String::class.java),
@@ -166,14 +166,14 @@ class JooqCheckRepository(
             .toList()
     }
 
-    override fun getLatestChecksByPage(siteId: UUID, pageUrl: String): List<io.reflectoring.components.checkengine.api.Check> {
+    override fun getLatestChecksByPage(tenantId: UUID, pageUrl: String): List<io.reflectoring.components.checkengine.api.Check> {
 
-        val latestChecks = latestSuccessfulChecks(siteId).asTable("latestChecks")
+        val latestChecks = latestSuccessfulChecks(tenantId).asTable("latestChecks")
 
         return jooq.select(
             field("id", Int::class.java),
             field("key", String::class.java),
-            field("site_id", String::class.java),
+            field("tenant_id", String::class.java),
             field("page_url", String::class.java),
             field("start_date", LocalDateTime::class.java),
             field("end_date", LocalDateTime::class.java),

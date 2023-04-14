@@ -1,4 +1,4 @@
-package io.reflectoring.components.checkengine.internal.sqs.internal
+package io.reflectoring.components.checkengine.internal.queue.internal
 
 import io.reflectoring.components.checkengine.api.CheckRequest
 import io.reflectoring.components.checkengine.internal.checkrunner.api.CheckRunner

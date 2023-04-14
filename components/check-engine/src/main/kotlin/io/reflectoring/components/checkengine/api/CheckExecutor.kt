@@ -17,5 +17,5 @@ interface CheckExecutor {
      * Executes the check for the given page.
      * Any exception that is thrown by this method will mark the check as unsuccessfully executed.
      */
-    fun execute(siteId: UUID, pageUrl: String): io.reflectoring.components.checkengine.api.CheckResult
+    fun execute(tenantId: UUID, pageUrl: String): io.reflectoring.components.checkengine.api.CheckResult
 }

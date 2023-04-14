@@ -1,4 +1,4 @@
-package io.reflectoring.components.checkengine.internal.sqs.internal
+package io.reflectoring.components.checkengine.internal.queue.internal
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

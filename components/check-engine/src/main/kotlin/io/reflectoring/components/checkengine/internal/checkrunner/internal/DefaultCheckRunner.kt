@@ -1,8 +1,5 @@
 package io.reflectoring.components.checkengine.internal.checkrunner.internal
 
-import io.reflectoring.components.checkengine.api.Check
-import io.reflectoring.components.checkengine.api.CheckRequest
-import io.reflectoring.components.checkengine.internal.checkrunner.api.CheckRunner
 import io.reflectoring.components.checkengine.internal.database.api.CheckMutations
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -20,7 +17,7 @@ class DefaultCheckRunner(
 
         try {
             val executor = checkResolver.getExecutorFor(checkRequest)
-            val result = executor.execute(checkRequest.siteId, checkRequest.pageUrl)
+            val result = executor.execute(checkRequest.tenantId, checkRequest.pageUrl)
             check.setResult(result)
             checkMutations.updateCheck(check)
         } catch (e: Exception) {

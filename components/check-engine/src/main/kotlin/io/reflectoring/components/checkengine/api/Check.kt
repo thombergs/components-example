@@ -12,7 +12,7 @@ enum class ExecutionStatus {
 class Check(
     val id: CheckId,
     val key: io.reflectoring.components.checkengine.api.CheckKey,
-    val siteId: UUID,
+    val tenantId: UUID,
     val pageUrl: String,
     val startDate: LocalDateTime,
     var endDate: LocalDateTime?,
