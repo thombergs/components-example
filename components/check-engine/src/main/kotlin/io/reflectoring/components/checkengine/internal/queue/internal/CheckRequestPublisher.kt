@@ -9,4 +9,4 @@ class CheckRequestPublisher(
     sqsQueueUrl: String?,
     sqsClient: AmazonSQS?,
     objectMapper: ObjectMapper?
-) : SqsMessagePublisher<io.reflectoring.components.checkengine.api.CheckRequest?>(sqsQueueUrl, sqsClient, objectMapper)
+) : SqsMessagePublisher<CheckRequest?>(sqsQueueUrl, sqsClient, objectMapper)

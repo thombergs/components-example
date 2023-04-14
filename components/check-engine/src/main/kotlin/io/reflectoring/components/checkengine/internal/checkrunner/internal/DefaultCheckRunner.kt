@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DefaultCheckRunner(
-    private val checkResolver: io.reflectoring.components.checkengine.internal.checkrunner.internal.CheckResolver,
+    private val checkResolver: CheckResolver,
     private val checkMutations: CheckMutations
 ) : io.reflectoring.components.checkengine.internal.checkrunner.api.CheckRunner {
 

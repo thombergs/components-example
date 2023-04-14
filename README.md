@@ -23,6 +23,8 @@ The API of the component provides the following functionality:
 - Schedule a check for asynchronous execution (see `CheckScheduler`).
 - Query for the results of one or more checks (see `CheckQueries`).
 
+![check engine](check-engine.drawio.png)
+
 The check engine component is made up of three sub components:
 
 - **queue**: This sub component interfaces with a queue to schedule checks for asynchronous implementation. This component implements the `CheckScheduler` API of the parent component.

@@ -11,11 +11,11 @@ interface CheckExecutor {
     /**
      * Returns the key of the check this executor covers.
      */
-    fun supportedCheck(): io.reflectoring.components.checkengine.api.CheckKey
+    fun supportedCheck(): CheckKey
 
     /**
      * Executes the check for the given page.
      * Any exception that is thrown by this method will mark the check as unsuccessfully executed.
      */
-    fun execute(tenantId: UUID, pageUrl: String): io.reflectoring.components.checkengine.api.CheckResult
+    fun execute(tenantId: UUID, pageUrl: String): CheckResult
 }

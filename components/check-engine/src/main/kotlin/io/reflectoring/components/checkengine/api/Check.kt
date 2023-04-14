@@ -11,13 +11,13 @@ enum class ExecutionStatus {
 
 class Check(
     val id: CheckId,
-    val key: io.reflectoring.components.checkengine.api.CheckKey,
+    val key: CheckKey,
     val tenantId: UUID,
     val pageUrl: String,
     val startDate: LocalDateTime,
     var endDate: LocalDateTime?,
-    var executionStatus: io.reflectoring.components.checkengine.api.ExecutionStatus,
-    var checkResult: io.reflectoring.components.checkengine.api.CheckResult?
+    var executionStatus: ExecutionStatus,
+    var checkResult: CheckResult?
 ) {
 
     /**
@@ -25,15 +25,15 @@ class Check(
      * does not have a result.
      */
     fun setExecutionError() {
-        this.executionStatus = io.reflectoring.components.checkengine.api.ExecutionStatus.ERROR
+        this.executionStatus = ExecutionStatus.ERROR
         this.endDate = LocalDateTime.now()
     }
 
     /**
      * Marks the check as having run successfully and saves the given result.
      */
-    fun setResult(result: io.reflectoring.components.checkengine.api.CheckResult) {
-        this.executionStatus = io.reflectoring.components.checkengine.api.ExecutionStatus.SUCCESS
+    fun setResult(result: CheckResult) {
+        this.executionStatus = ExecutionStatus.SUCCESS
         this.endDate = LocalDateTime.now()
         this.checkResult = result
     }

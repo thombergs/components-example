@@ -1,5 +1,8 @@
 package io.reflectoring.components.checkengine.internal.checkrunner.internal
 
+import io.reflectoring.components.checkengine.api.CheckExecutor
+import io.reflectoring.components.checkengine.api.CheckKey
+import io.reflectoring.components.checkengine.api.CheckRequest
 import org.springframework.stereotype.Component
 
 /**
@@ -7,9 +10,9 @@ import org.springframework.stereotype.Component
  * for a given CheckRequest.
  */
 @Component
-class CheckResolver(executors: List<io.reflectoring.components.checkengine.api.CheckExecutor>) {
+class CheckResolver(executors: List<CheckExecutor>) {
 
-    private val executors: Map<io.reflectoring.components.checkengine.api.CheckKey, io.reflectoring.components.checkengine.api.CheckExecutor>
+    private val executors: Map<CheckKey, CheckExecutor>
 
     init {
         this.executors = executors.associateBy { it.supportedCheck() }
@@ -19,13 +22,13 @@ class CheckResolver(executors: List<io.reflectoring.components.checkengine.api.C
      * Returns the CheckExecutor for the given CheckRequest.
      * Throws an IllegalStateException if there is no CheckExecutor for the given CheckRequest.
      */
-    fun getExecutorFor(checkRequest: io.reflectoring.components.checkengine.api.CheckRequest): io.reflectoring.components.checkengine.api.CheckExecutor {
+    fun getExecutorFor(checkRequest: CheckRequest): CheckExecutor {
         return executors[checkRequest.checkKey]
-            ?: throw io.reflectoring.components.checkengine.internal.checkrunner.internal.ExecutorNotFoundException(
+            ?: throw ExecutorNotFoundException(
                 checkRequest.checkKey
             )
     }
 }
 
-class ExecutorNotFoundException(checkKey: io.reflectoring.components.checkengine.api.CheckKey) :
+class ExecutorNotFoundException(checkKey: CheckKey) :
     java.lang.RuntimeException("could not find CheckExecutor for check with key $checkKey")

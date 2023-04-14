@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component
 
 @Component
 class CheckRequestListener(
-    private val checkRunner: io.reflectoring.components.checkengine.internal.checkrunner.api.CheckRunner
-) : SqsMessageHandler<io.reflectoring.components.checkengine.api.CheckRequest> {
+    private val checkRunner: CheckRunner
+) : SqsMessageHandler<CheckRequest> {
 
-    override fun handle(check: io.reflectoring.components.checkengine.api.CheckRequest) {
+    override fun handle(check: CheckRequest) {
         checkRunner.runCheck(check)
     }
 
-    override fun messageType(): Class<io.reflectoring.components.checkengine.api.CheckRequest> {
-        return io.reflectoring.components.checkengine.api.CheckRequest::class.java
+    override fun messageType(): Class<CheckRequest> {
+        return CheckRequest::class.java
     }
 }

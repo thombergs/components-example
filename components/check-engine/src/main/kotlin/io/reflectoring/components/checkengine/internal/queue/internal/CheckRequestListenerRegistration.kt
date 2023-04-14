@@ -19,9 +19,9 @@ class CheckRequestListenerRegistration(
     @Value("\${check-engine.sqs.check-requests.pollDelay}") private val pollDelay: Duration,
     @Qualifier("checkRequestSqsListenerClient") private val sqsClient: AmazonSQS,
     private val objectMapper: ObjectMapper
-) : DefaultSqsMessageHandlerRegistration<io.reflectoring.components.checkengine.api.CheckRequest>() {
+) : DefaultSqsMessageHandlerRegistration<CheckRequest>() {
 
-    override fun messageHandler(): SqsMessageHandler<io.reflectoring.components.checkengine.api.CheckRequest> {
+    override fun messageHandler(): SqsMessageHandler<CheckRequest> {
         return eventListener
     }
 
